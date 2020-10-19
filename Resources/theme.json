@@ -1,0 +1,30 @@
+{
+  "light": {
+    "background": "#f8f8f6",
+    "currentLine": "#f1f1f1",
+    "selection": "#7E8192",
+    "foreground": "#282a36",
+    "comment": "#273A71",
+    "cyan": "#39CDF0",
+    "green": "#00EE3F",
+    "orange": "#C07320",
+    "pink": "#FD209D",
+    "purple": "#8948E3",
+    "red": "#BF1111",
+    "yellow": "#A7B231"
+  },
+  "dracula": {
+    "background": "#282a36",
+    "currentLine": "#44475a",
+    "selection": "#464B66",
+    "foreground": "#f8f8f2",
+    "comment": "#6272a4",
+    "cyan": "#8be9fd",
+    "green": "#50fa7b",
+    "orange": "#ffb86c",
+    "pink": "#ff79c6",
+    "purple": "#bd93f9",
+    "red": "#ff5555",
+    "yellow": "#f1fa8c"
+  }
+}
