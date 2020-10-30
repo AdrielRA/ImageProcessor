@@ -219,11 +219,14 @@ namespace ImageProcessor
                     DialogResult res = MessageBox.Show("Descartar alterações atuais?", "Atenção:", MessageBoxButtons.YesNo);
                     if(res == DialogResult.Yes)
                     {
+                        try { if (MainController.atual != null) MainController.atual.Dispose(); }
+                        catch { }
+
                         picImage.Image = MainController.atual = new Bitmap(MainController.original);
                         cmbEfeito.SelectedIndex = 0;
                         sldIntensidade.Value = 100;
                         lblIntensidade.Text = "100%";
-                        MainController.pendingChanges = false;
+                        MainController.pendingChanges = false;                        
                     }
                 }
                 
@@ -254,7 +257,8 @@ namespace ImageProcessor
                         sldIntensidade.Value = 100;
                         lblIntensidade.Text = "100%";
                         MainController.pendingChanges = false;
-                        MainController.original = new Bitmap(picImage.Image);
+                        MainController.original = MainController.atual = new Bitmap(picImage.Image);
+                        MainController.pathOriginal = dialog.FileName;
                         lblFileName.Text = dialog.FileName.Split('\\').LastOrDefault();
                     }
                 }

@@ -24,7 +24,7 @@ namespace ImageProcessor.Controller
 
         internal static void loadThemes()
         {
-            using (StreamReader r = new StreamReader(@"../../Resources/theme.json"))
+            using (StreamReader r = new StreamReader("theme.json"))
             {
                 string json = r.ReadToEnd();
                 themes = JsonConvert.DeserializeObject<dynamic>(json);
@@ -202,19 +202,47 @@ namespace ImageProcessor.Controller
         internal static Bitmap somaTruncada()
         {
             string pyPath = currentPath() + "operations.py";
-            runPython(new string[] { pyPath, pathOriginal, pathSecondaria, "add" });
+            string atualPath = currentPath() + @"temp\current.jpg";
+            saveCurrent(atualPath);
+            string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
 
-            try { return new Bitmap(currentPath() + @"temp/add.png"); }
-            catch { return null; }            
+            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "\""+ pathSecondaria + "\"", "add" });
+
+            try {
+                using (Stream s = File.OpenRead(currentPath() + @"temp/add.png"))
+                return (Bitmap)Image.FromStream(s);
+            }
+            catch { return atual; }            
         }
 
         internal static Bitmap subTruncada()
         {
             string pyPath = currentPath() + "operations.py";
-            runPython(new string[] { pyPath, pathOriginal, pathSecondaria, "sub" });
 
-            try { return new Bitmap(currentPath() + @"temp/sub.png"); }
-            catch { return null; }
+            string atualPath = currentPath() + @"temp\current.jpg";
+            saveCurrent(atualPath);
+            string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
+
+            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "\"" + pathSecondaria + "\"", "sub" });
+
+            try {
+                using (Stream s = File.OpenRead(currentPath() + @"temp/sub.png"))
+                return (Bitmap)Image.FromStream(s);
+            }
+            catch { return atual; }
+        }
+
+        private static void saveCurrent(string path)
+        {
+            if (atual != null)
+            {
+                try
+                {
+                    if (!Directory.Exists(currentPath() + "temp")) Directory.CreateDirectory(currentPath() + "temp");
+                    new Bitmap(atual).Save(path, ImageFormat.Jpeg);
+                }
+                catch { }
+            }
         }
 
         private static void runPython(string[] args)
@@ -232,7 +260,7 @@ namespace ImageProcessor.Controller
             try
             {
                 string caminhoExecutavel = System.Reflection.Assembly.GetCallingAssembly().Location;
-                string pastaExecutavel = new System.IO.FileInfo(caminhoExecutavel).DirectoryName;
+                string pastaExecutavel = new FileInfo(caminhoExecutavel).DirectoryName;
                 return pastaExecutavel += @"\";
 
             }
@@ -244,8 +272,9 @@ namespace ImageProcessor.Controller
 
         internal static void clearTemp()
         {
+
             try { Directory.Delete(currentPath() + "temp", true); }
-            catch { }            
+            catch {}            
         }
 
     }

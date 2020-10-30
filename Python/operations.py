@@ -7,12 +7,6 @@ path2 = sys.argv[2]
 op = sys.argv[3]
 
 if os.path.exists(path1) and os.path.exists(path2) and op:
-    """
-    img1 = os.path.basename(path1)
-    img2 = os.path.basename(path2)
-    print(img1)
-    print(img2)
-    """
     
     imagem1 = cv2.imread(path1)
     imagem2 = cv2.imread(path2)
