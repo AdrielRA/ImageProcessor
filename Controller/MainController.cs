@@ -275,7 +275,21 @@ namespace ImageProcessor.Controller
 
         internal static Bitmap desfoque(int multiplicador)
         {
-            throw new NotImplementedException();
+            string pyPath = currentPath() + "operations.py";
+
+            string atualPath = currentPath() + @"temp\current.jpg";
+            saveCurrent(atualPath);
+            string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
+
+            // Chama script .py, passando imagem e define operação como blur = desfoque e a intensidade
+            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "blur", (multiplicador / 10).ToString() });
+
+            try
+            {
+                using (Stream s = File.OpenRead(currentPath() + @"temp/blur.png"))
+                    return (Bitmap)Image.FromStream(s);
+            }
+            catch { return atual; }
         }
 
         internal static Bitmap preset1(int multiplicador)
@@ -299,7 +313,21 @@ namespace ImageProcessor.Controller
 
         internal static Bitmap preset2(int multiplicador)
         {
-            throw new NotImplementedException();
+            string pyPath = currentPath() + "operations.py";
+
+            string atualPath = currentPath() + @"temp\current.jpg";
+            saveCurrent(atualPath);
+            string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
+
+            // Chama script .py, passando imagem e define operação como preset1 = combinação dos efeitos (desfoque, subrai, multiplica)
+            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "preset2", (multiplicador).ToString() });
+
+            try
+            {
+                using (Stream s = File.OpenRead(currentPath() + @"temp/preset2.png"))
+                    return (Bitmap)Image.FromStream(s);
+            }
+            catch { return atual; }
         }
 
         // Salva imagem no estado atual temporariamente
