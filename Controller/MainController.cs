@@ -15,13 +15,18 @@ namespace ImageProcessor.Controller
 {
     class MainController
     {
+        // temas disponiveis
         private static dynamic themes;
+        // tema ativo no momento
         public static dynamic theme;
+        // imagens utilizadas durante a execução
         public static Bitmap original, atual, secondaria;
+        // informações uteis
         public static string activeTheme, pathOriginal, pathSecondaria;
+        // assinála existencia de alterações não salvas
         public static bool pendingChanges;
 
-
+        // Carrega arquivo theme.json
         internal static void loadThemes()
         {
             using (StreamReader r = new StreamReader("theme.json"))
@@ -31,6 +36,7 @@ namespace ImageProcessor.Controller
             }
         }
 
+        // Trata alternancia de tema claro e escuro
         public static void setTheme(string themeName)
         {
             activeTheme = themeName;            
@@ -38,9 +44,11 @@ namespace ImageProcessor.Controller
             Main.instance.onThemeChange(themeName);
         }
 
+        // Implementa algoritmo de soma escalar
         internal static Bitmap clarear(int multiplicador)
         {
             Bitmap img = new Bitmap(atual);
+            // calcula intensidade do efeito
             int intensidade = (int)(multiplicador / 100.0 * 255);
 
             int width = img.Width, height = img.Height;
@@ -66,6 +74,7 @@ namespace ImageProcessor.Controller
             return img;
         }
 
+        // Implementa algoritmo de subtração escalar
         internal static Bitmap escurecer(int multiplicador)
         {
             Bitmap img = new Bitmap(atual);
@@ -96,22 +105,25 @@ namespace ImageProcessor.Controller
 
         internal static Bitmap somaNormalizada(int multiplicador)
         {
+            // calcula intermediarias levando em conta a intensidade desejada
             List<int[,]> inter = intermediaria(multiplicador, "soma");
+            // realiza normalização 
             return normalizar(inter, atual.Width, atual.Height);
         }
 
         internal static Bitmap subNormalizada(int multiplicador)
         {
-
             List<int[,]> inter = intermediaria(multiplicador, "sub");
             return normalizar(inter, atual.Width, atual.Height);
         }
 
+        // Implementa algoritmo de intermediária
         private static List<int[,]> intermediaria(int multiplicador, string tipo)
         {
             Bitmap img1 = new Bitmap(atual);
+            // redimensiona imagem secundária para o tamanho da primeira
             Bitmap img2 = new Bitmap(secondaria, new Size(img1.Width, img1.Height));
-
+            // calcula intensidade
             float intensidade = multiplicador / 100f;
 
             int width = img1.Width, height = img2.Height;
@@ -153,6 +165,7 @@ namespace ImageProcessor.Controller
             return matrix;
         }
 
+        // Recebe as matrizes intermediarias e retorna imagem normalizada
         private static Bitmap normalizar(List<int[,]> inter, int width, int height)
         {
             Bitmap img = new Bitmap(width, height);
@@ -199,19 +212,27 @@ namespace ImageProcessor.Controller
             catch { return null; }
         }
 
+        // Faz chamada ao script python que implementa a soma truncada
         internal static Bitmap somaTruncada()
         {
+            // Caminho do arquivo .py
             string pyPath = currentPath() + "operations.py";
+            // Caminho da imagem atual (temporária)
             string atualPath = currentPath() + @"temp\current.jpg";
+            // Salva estado atual da imagem editada para ser usada pelo arquivo .py
             saveCurrent(atualPath);
+            // Verifica se a imagem atual foi salva, caso contrario pega o caminho da imagem original
             string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
 
+            // Executa script .py passando dinamicamente o caminho das imagens e a operação q será realizada
             runPython(new string[] { pyPath, "\"" + baseImg + "\"", "\""+ pathSecondaria + "\"", "add" });
 
             try {
+                // Após a execução do .py, a imagem gerada será carregada
                 using (Stream s = File.OpenRead(currentPath() + @"temp/add.png"))
                 return (Bitmap)Image.FromStream(s);
             }
+            // em caso de falha, mantém a imagem atual
             catch { return atual; }            
         }
 
@@ -223,6 +244,7 @@ namespace ImageProcessor.Controller
             saveCurrent(atualPath);
             string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
 
+            // Chama script .py, passando imagens e define operação como sub = subtração
             runPython(new string[] { pyPath, "\"" + baseImg + "\"", "\"" + pathSecondaria + "\"", "sub" });
 
             try {
@@ -232,6 +254,7 @@ namespace ImageProcessor.Controller
             catch { return atual; }
         }
 
+        // Salva imagem no estado atual temporariamente
         private static void saveCurrent(string path)
         {
             if (atual != null)
@@ -245,16 +268,23 @@ namespace ImageProcessor.Controller
             }
         }
 
+        // Executa python recebendo argumentos: caminho do script .py, imagens e operação desejada
         private static void runPython(string[] args)
         {
+            // É necessário q o comando 'py' será reconhecido em seu terminal para funcionar
+            // 'py' é a variavel de ambiente que define o caminho do executavel python de sua máquina
             ProcessStartInfo startInfo = new ProcessStartInfo("py");
+            // concatena os argumentos que será utilizados pelo script .py
             startInfo.Arguments = string.Join(" ", args);
+            // desativa vizualização do terminal, para melhor experiência do usuário
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = true;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            // Executa o comando e aguarda sua finalização
             Process.Start(startInfo).WaitForExit();
         }
 
+        // Retorna o caminho atual
         private static string currentPath()
         {
             try
@@ -270,9 +300,9 @@ namespace ImageProcessor.Controller
             }
         }
 
+        // Deleta diretório ./temp e imagens contidadas
         internal static void clearTemp()
         {
-
             try { Directory.Delete(currentPath() + "temp", true); }
             catch {}            
         }
