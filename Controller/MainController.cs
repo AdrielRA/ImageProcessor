@@ -213,7 +213,7 @@ namespace ImageProcessor.Controller
         }
 
         // Faz chamada ao script python que implementa a soma truncada
-        internal static Bitmap somaTruncada()
+        internal static Bitmap somaTruncada(int multiplicador)
         {
             // Caminho do arquivo .py
             string pyPath = currentPath() + "operations.py";
@@ -225,7 +225,7 @@ namespace ImageProcessor.Controller
             string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
 
             // Executa script .py passando dinamicamente o caminho das imagens e a operação q será realizada
-            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "\""+ pathSecondaria + "\"", "add" });
+            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "\""+ pathSecondaria + "\"", "add", multiplicador.ToString() });
 
             try {
                 // Após a execução do .py, a imagem gerada será carregada
@@ -236,7 +236,7 @@ namespace ImageProcessor.Controller
             catch { return atual; }            
         }
 
-        internal static Bitmap subTruncada()
+        internal static Bitmap subTruncada(int multiplicador)
         {
             string pyPath = currentPath() + "operations.py";
 
@@ -245,13 +245,47 @@ namespace ImageProcessor.Controller
             string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
 
             // Chama script .py, passando imagens e define operação como sub = subtração
-            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "\"" + pathSecondaria + "\"", "sub" });
+            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "\"" + pathSecondaria + "\"", "sub", multiplicador.ToString() });
 
             try {
                 using (Stream s = File.OpenRead(currentPath() + @"temp/sub.png"))
                 return (Bitmap)Image.FromStream(s);
             }
             catch { return atual; }
+        }
+
+        internal static Bitmap multiplicar(int multiplicador)
+        {
+            string pyPath = currentPath() + "operations.py";
+
+            string atualPath = currentPath() + @"temp\current.jpg";
+            saveCurrent(atualPath);
+            string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
+
+            // Chama script .py, passando imagem e define operação como blur = desfoque e a intensidade
+            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "mul", (multiplicador / 10).ToString() });
+
+            try
+            {
+                using (Stream s = File.OpenRead(currentPath() + @"temp/mul.png"))
+                    return (Bitmap)Image.FromStream(s);
+            }
+            catch { return atual; }
+        }
+
+        internal static Bitmap desfoque(int multiplicador)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static Bitmap preset1(int multiplicador)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static Bitmap preset2(int multiplicador)
+        {
+            throw new NotImplementedException();
         }
 
         // Salva imagem no estado atual temporariamente

@@ -229,7 +229,7 @@ namespace ImageProcessor
                     if (MainController.secondaria != null)
                         await Task.Run(() =>
                         {
-                            img = MainController.somaTruncada();
+                            img = MainController.somaTruncada(sldIntensidade.Value);
                         });
                     break;
                 case 5:
@@ -237,8 +237,32 @@ namespace ImageProcessor
                     if (MainController.secondaria != null)
                         await Task.Run(() =>
                         {
-                            img = MainController.subTruncada();
+                            img = MainController.subTruncada(sldIntensidade.Value);
                         });
+                    break;
+                case 6:
+                    await Task.Run(() =>
+                    {
+                        img = MainController.multiplicar(sldIntensidade.Value);
+                    });
+                    break;
+                case 7:
+                    await Task.Run(() =>
+                    {
+                        img = MainController.desfoque(sldIntensidade.Value);
+                    });
+                    break;                
+                case 8:
+                    await Task.Run(() =>
+                    {
+                        img = MainController.preset1(sldIntensidade.Value);
+                    });
+                    break;
+                case 9:
+                    await Task.Run(() =>
+                    {
+                        img = MainController.preset2(sldIntensidade.Value);
+                    });
                     break;
                 default: break;
             }

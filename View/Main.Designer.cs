@@ -244,7 +244,11 @@
             "Soma Norm.",
             "Sub. Norm.",
             "Soma Trunc.",
-            "Sub. Trunc"});
+            "Sub. Trunc",
+            "Multiplicar",
+            "Desfoque",
+            "Efeito 1",
+            "Efeito 2"});
             this.cmbEfeito.Location = new System.Drawing.Point(7, 170);
             this.cmbEfeito.Name = "cmbEfeito";
             this.cmbEfeito.Size = new System.Drawing.Size(142, 27);
