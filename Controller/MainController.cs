@@ -282,7 +282,7 @@ namespace ImageProcessor.Controller
             string baseImg = File.Exists(atualPath) ? atualPath : pathOriginal;
 
             // Chama script .py, passando imagem e define operação como blur = desfoque e a intensidade
-            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "blur", (multiplicador / 10).ToString() });
+            runPython(new string[] { pyPath, "\"" + baseImg + "\"", "blur", (multiplicador).ToString() });
 
             try
             {

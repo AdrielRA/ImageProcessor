@@ -9,7 +9,9 @@ def sub(img1, img2):
     return cv2.subtract(img1, img2)
 
 def blur(img, intensity):
-    return cv2.GaussianBlur(img, (49,49), intensity)
+    mask = intensity + (intensity % 2 + 1)
+    mask = 9 if mask < 10 else mask
+    return cv2.GaussianBlur(img, (mask, mask), intensity)
 
 def mul(img, scalar):
     result = img * scalar
